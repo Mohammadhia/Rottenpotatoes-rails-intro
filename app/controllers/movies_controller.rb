@@ -12,11 +12,7 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
-    if params[:sort] then
-      @movies = Movie.order(params[:sort])
-    else
-      @movies = Movie.all
-    end
+    sort = params[:sort] || session[:sort] #Holds what is sent by the click. (Will use session later to hold cookies)
     
     if params[:sort] == "title" then
       @title_header = "hilite"
@@ -28,6 +24,16 @@ class MoviesController < ApplicationController
     else
       @release_date_header = ""
     end
+    
+    if params[:sort] != session[:sort] #Will use session here later
+      session[:sort] = sort
+      redirect_to :sort => sort and return #Will add ratings later
+    else
+      @movies = Movie.all
+    end
+    
+    @movies = Movie.order(params[:sort]) #Where statement will be added later
+  
   end
 
   def new
